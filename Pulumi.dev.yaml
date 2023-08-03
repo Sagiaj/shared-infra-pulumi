@@ -1,0 +1,7 @@
+config:
+  aws:profile: personal_sagi
+  aws:region: eu-central-1
+  pulumi-infra:arti_domain: artithewriter.com
+  pulumi-infra:arti_domain_front: xn-----uldftcqite8b7f5ac.com
+  pulumi-infra:arti_domain_front_subdomain: app
+  pulumi-infra:aws_region: eu-central-1
