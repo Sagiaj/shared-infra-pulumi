@@ -1,6 +1,6 @@
 import * as aws from "@pulumi/aws";
 import { App } from "@pulumi/aws/amplify";
-import { accessTokens, config } from './../globals/config';
+import { accessTokens, config } from '../../globals/config';
 
 export class ApplicativeArtiFrontend {
     // private DomainName = config.require("arti_domain_front");

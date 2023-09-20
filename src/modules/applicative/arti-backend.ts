@@ -1,6 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
-import { config } from "../globals/config";
+import { config } from "../../globals/config";
 import { GetValue } from "../../utils/pulumi-utilities";
 
 export class ApplicativeArtiBackend {
@@ -194,7 +194,7 @@ export class ApplicativeArtiBackend {
     createACMSubdomainCertificate(subdomain: string) {
         return new aws.acm.Certificate(`${this.BaseResourceName}-${subdomain}.${this.DomainName}-certificate`, {
             domainName: `${subdomain}.${this.DomainName}`,
-            validationMethod: "DNS",
+            validationMethod: "DNS"
         });
     }
     
