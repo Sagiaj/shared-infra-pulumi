@@ -27,7 +27,7 @@ export class RouteTableResource {
 
     associateWithSubnet(routeTable: aws.ec2.RouteTable, subnet: aws.ec2.Subnet, suffix: string): aws.ec2.RouteTableAssociation {
         const associationName = this.getAssociationName(suffix);
-        return new aws.ec2.RouteTableAssociation(associationName, {
+        return new aws.ec2.RouteTableAssociation(`${associationName}-subnet`, {
             routeTableId: routeTable.id,
             subnetId: subnet.id
         });
@@ -48,15 +48,16 @@ export class RouteTableResource {
     }
 }
 
-const mainRouteTableManager = new RouteTableResource(mainVPC, "main");
+const mainPrvNatGwRouteTableManager = new RouteTableResource(mainVPC, "main-prv-nat-gw");
+const mainPubRouteTableManager = new RouteTableResource(mainVPC, "main-pub-igw");
 
-export const prvNatGwRouteTable = mainRouteTableManager.createRouteTable([
+export const prvNatGwRouteTable = mainPrvNatGwRouteTableManager.createRouteTable([
     { cidrBlock: "0.0.0.0/0", natGatewayId: mainNatGw.id }
 ]);
 
-const pubRouteTable = mainRouteTableManager.createRouteTable([
+export const pubRouteTable = mainPubRouteTableManager.createRouteTable([
     { cidrBlock: "0.0.0.0/0", gatewayId: mainIGW.id }
 ]);
 
-export const mainPubRouteTableAssociations = mainRouteTableManager.associateWithSubnets(pubRouteTable, [mainPublicSubnet]);
-export const mainPrivRouteTableAssociations = mainRouteTableManager.associateWithSubnets(prvNatGwRouteTable, [mainPrivateSubnet]);
+export const mainPubRouteTableAssociations = mainPubRouteTableManager.associateWithSubnets(pubRouteTable, [mainPublicSubnet]);
+export const mainPrivRouteTableAssociations = mainPrvNatGwRouteTableManager.associateWithSubnets(prvNatGwRouteTable, [mainPrivateSubnet]);

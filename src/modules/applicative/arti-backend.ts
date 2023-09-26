@@ -183,7 +183,7 @@ export class ApplicativeArtiBackend {
             zoneId: zone.zoneId
         }, { dependsOn: [certificate], ...options });
 
-        const certificateValidation = new aws.acm.CertificateValidation(`${this.BaseResourceName}-${domain_name}-certificateValidation`, {
+        const certificateValidation = new aws.acm.CertificateValidation(`${this.BaseResourceName}-${domain_name}-certificate-validation`, {
             certificateArn: certificate.arn,
             validationRecordFqdns: [validationRecord.fqdn],
         }, { dependsOn: [validationRecord], ...options });

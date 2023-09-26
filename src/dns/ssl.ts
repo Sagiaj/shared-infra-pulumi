@@ -5,15 +5,17 @@ export class ACMSSLCertificate {
     private domainName: string = "";
     certificate: Certificate;
     validation: CertificateValidation;
+    region: aws.Region;
 
     constructor(domainName: string, zone: aws.route53.Zone, region: aws.Region, provider?: aws.Provider) {
         this.domainName = domainName;
-        this.certificate = this.createACMCertificate(region, provider);
+        this.region = region;
+        this.certificate = this.createACMCertificate(provider);
         this.validation = this.validateCertificate(this.certificate, zone, provider);
     }
 
-    createACMCertificate(region: aws.Region, provider?: aws.Provider) {
-        this.certificate = new aws.acm.Certificate(`${this.domainName}-certificate`, {
+    createACMCertificate(provider?: aws.Provider) {
+        this.certificate = new aws.acm.Certificate(`${this.domainName}-${this.region}-certificate`, {
             domainName: this.domainName,
             validationMethod: "DNS"
         }, { provider });
@@ -26,7 +28,7 @@ export class ACMSSLCertificate {
         if (provider) {
             options["provider"] = provider;
         }
-        const validationRecord = new aws.route53.Record(`${this.domainName}-validation-record`, {
+        const validationRecord = new aws.route53.Record(`${this.domainName}-${this.region}-validation-record`, {
             name: certificate.domainValidationOptions[0].resourceRecordName,
             type: certificate.domainValidationOptions[0].resourceRecordType,
             ttl: 300,
@@ -34,7 +36,7 @@ export class ACMSSLCertificate {
             zoneId: zone.zoneId
         }, { dependsOn: [certificate], ...options });
 
-        this.validation = new aws.acm.CertificateValidation(`${this.domainName}-certificateValidation`, {
+        this.validation = new aws.acm.CertificateValidation(`${this.domainName}-${this.region}-certificate-validation`, {
             certificateArn: certificate.arn,
             validationRecordFqdns: [validationRecord.fqdn],
         }, { dependsOn: [validationRecord], ...options });

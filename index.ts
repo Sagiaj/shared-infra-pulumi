@@ -9,6 +9,7 @@ import { DNS } from "./src/dns/domains";
 import { mainRedisAllowAllSG } from './src/network/security-groups';
 import { RedisCluster } from './src/datastores/redis';
 import { mainVPC } from './src/network/vpc';
+import './src/network/route-tables';
 
 (async function () {
     const artiBackSubDomain = "back";
@@ -19,13 +20,14 @@ import { mainVPC } from './src/network/vpc';
     
     // Start of arti-backend.ts
     const euCentralProvider = new aws.Provider(`aws-provider-${region}`, { region, profile: "personal_sagi" });
+    const usEast1Provider = new aws.Provider(`aws-provider-${aws.Region.USEast1}`, { region: aws.Region.USEast1, profile: "personal_sagi" });
     const artiHostedZone = new HostedZone(artiDomain).create();
     const artiBackDNS = new DNS(artiHostedZone);
     const artiRegisteredDomain = artiBackDNS.updateDomainNameServers(artiDomain);
 
     const artiMainACMSSL = new ACMSSLCertificate(artiDomain, artiHostedZone, aws.Region.EUCentral1, euCentralProvider);
     const artiBackACMSSL = new ACMSSLCertificate(`${artiBackSubDomain}.${artiDomain}`, artiHostedZone, aws.Region.EUCentral1, euCentralProvider);
-    const artiStreamACMSSL = new ACMSSLCertificate(`${artiStreamsSubDomain}.${artiDomain}`, artiHostedZone, aws.Region.EUCentral1, euCentralProvider);
+    const artiStreamACMSSL = new ACMSSLCertificate(`${artiStreamsSubDomain}.${artiDomain}`, artiHostedZone, aws.Region.USEast1, usEast1Provider);
 
     // Redis
     const redisSubnetGroup = new aws.elasticache.SubnetGroup(`main-redis-subnet-group`, {
@@ -98,11 +100,15 @@ import { mainVPC } from './src/network/vpc';
 
 
 
-// const { landingPageApp } = new ApplicativeArtiLanding().create();
+// import { ApplicativeArtiBackend } from './src/modules/applicative/arti-backend';
+// // import { ApplicativeArtiLanding } from './src/modules/applicative/arti-landing';
+// import { ApplicativeArtiFrontend } from './src/modules/applicative/arti-frontend';
 
-// exports.landingApp = {
-//     app: landingPageApp
-// };
+// // const { landingPageApp } = new ApplicativeArtiLanding().create();
+
+// // exports.landingApp = {
+// //     app: landingPageApp
+// // };
 
 // new ApplicativeArtiFrontend().create().then(({ frontApp, domainAssociation, frontAppMasterBranch }) => {
 //     exports.frontApp = {
@@ -112,9 +118,8 @@ import { mainVPC } from './src/network/vpc';
 //     };
 // });
 
-// new ApplicativeArtiBackend().create().then(({ apiGateway }) => {
-//     exports.artiApiGateway = {
-//         apiGateway
+// new ApplicativeArtiBackend().create().then(({ records }) => {
+//     exports.records = {
+//         records
 //     };
 // });
-
