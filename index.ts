@@ -26,7 +26,7 @@ import './src/network/route-tables';
     const artiRegisteredDomain = artiBackDNS.updateDomainNameServers(artiDomain);
 
     const artiMainACMSSL = new ACMSSLCertificate(artiDomain, artiHostedZone, aws.Region.EUCentral1, euCentralProvider);
-    const artiCloudFrontACM = new ACMSSLCertificate(artiDomain, artiHostedZone, aws.Region.USEast1, euCentralProvider);
+    const artiCloudFrontACM = new ACMSSLCertificate(artiDomain, artiHostedZone, aws.Region.USEast1, usEast1Provider);
     const artiBackACMSSL = new ACMSSLCertificate(`${artiBackSubDomain}.${artiDomain}`, artiHostedZone, aws.Region.EUCentral1, euCentralProvider);
     const artiStreamACMSSL = new ACMSSLCertificate(`${artiStreamsSubDomain}.${artiDomain}`, artiHostedZone, aws.Region.USEast1, usEast1Provider);
 
