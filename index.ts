@@ -6,7 +6,7 @@ import { config } from "./src/globals/config";
 import { ACMSSLCertificate } from './src/dns/ssl';
 import { HostedZone } from './src/dns/zone';
 import { DNS } from "./src/dns/domains";
-import { mainRedisAllowAllSG, mainSecurityGroup } from './src/network/security-groups';
+import { mainRedisAllowAllSG } from './src/network/security-groups';
 import { RedisCluster } from './src/datastores/redis';
 import { mainVPC } from './src/network/vpc';
 import './src/network/route-tables';
@@ -62,8 +62,7 @@ import './src/network/route-tables';
             main: mainVPC
         },
         securityGroups: {
-            main: mainRedisAllowAllSG,
-            mainSecurityGroup
+            main: mainRedisAllowAllSG
         }
     };
 
